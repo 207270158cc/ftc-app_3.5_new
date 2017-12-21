@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Team2telop", group="Linear Opmode")
+@TeleOp(name="Team2_telop", group="Linear Opmode")
 //@Disabled
 public class Team2telop extends LinearOpMode {
 
@@ -63,13 +63,11 @@ public class Team2telop extends LinearOpMode {
 
     //I got rid of rearRightServo and rearLeftServo
     private Servo GrabLift = null;
-    private Servo RelicGrabber = null;
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor elevatorDrive = null;
-    private DcMotor armDrive = null;
     public Servo GrabMove;
-    double servoStartPos = 0.5;
+    double servoStartPos = 0.02;
 
 
     @Override
@@ -85,15 +83,13 @@ public class Team2telop extends LinearOpMode {
         //leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         //rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
-        GrabMove = hardwareMap.get(Servo.class, "moveServo");
-        GrabLift = hardwareMap.get(Servo.class, "liftServo");
-        RelicGrabber = hardwareMap.get(Servo.class, "RelicServo");
-        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive");
-       armDrive = hardwareMap.get (DcMotor.class, "armDrive");
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        GrabMove = hardwareMap.get(Servo.class, "move_servo");
+        GrabLift = hardwareMap.get(Servo.class, "liftservo");
+        elevatorDrive = hardwareMap.get(DcMotor.class, "elevator_drive");
 
-
+        GrabLift.setPosition(servoStartPos);
 
 
 
@@ -106,32 +102,21 @@ public class Team2telop extends LinearOpMode {
         double maxspeed = 1;
         double nospeed = 0;
         double halfspeed = .5;
-        double servoDelta = 0.1;
+        final double CLAW_SPEED = 0.02;
         double leftPower;
         double rightPower;
         double elevatorPower;
-        double armPower;
         //sets rate to move servo
-        double servo1Position;
-        double servo2Position;
-        double servo3Position;
-
-        servo1Position=(servoStartPos);
-        servo2Position=(servoStartPos);
-        servo3Position=(servoStartPos);
-
-
+        double GrabServoPower;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
         GrabLift.setDirection(Servo.Direction.FORWARD);
         elevatorDrive.setDirection(DcMotor.Direction.FORWARD);
-        armDrive.setDirection(DcMotor.Direction.FORWARD);
-        RelicGrabber.setDirection(Servo.Direction.FORWARD);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -146,47 +131,26 @@ public class Team2telop extends LinearOpMode {
 
             leftPower  = -gamepad1.left_stick_y;
             rightPower = -gamepad1.right_stick_y ;
-            elevatorPower = -gamepad2.left_stick_y;
-            armPower = -gamepad2.right_stick_y;
+            elevatorPower = gamepad2.left_stick_y;
+            GrabServoPower  = -gamepad2.left_stick_y;
 
 
-            if (gamepad1.x) {
+            if (gamepad2.x)
 
-                servo1Position -= servoDelta;
-                servo2Position += servoDelta;}
-
+                GrabLift.setPosition(GrabLift.getPosition()+CLAW_SPEED);
                 //servo1.setPosition(servo1.getPosition()+CLAW_SPEED);
 
-            else if (gamepad1.y) {
-                    servo1Position += servoDelta;
-                    servo2Position -= servoDelta;
-
-                }
+            else if (gamepad2.y)
+                GrabLift.setPosition(GrabLift.getPosition()-CLAW_SPEED);
+            GrabMove.setPosition(GrabMove.getPosition()-CLAW_SPEED);
 
 
-            if (gamepad1.b) {
 
-                servo3Position -= servoDelta; }
-
-
-            else if (gamepad1.a) {
-                servo3Position += servoDelta;
-
-            }
-
-                servo1Position=Range.clip(servo1Position,0,1);
-                servo2Position= Range.clip(servo2Position, 0,  1);
-                //servo3Position= Range.clip(servo3Position, 0, 1);
-
-                GrabLift.setPosition(servo1Position);
-                GrabMove.setPosition(servo2Position);
-                RelicGrabber.setPosition(servo3Position);
             // Send calculated power to wheels
 
             leftDrive.setPower(leftPower);
-            rightDrive.setPower(-rightPower);
+            rightDrive.setPower(rightPower);
             elevatorDrive.setPower(elevatorPower);
-            armDrive.setPower(armPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
