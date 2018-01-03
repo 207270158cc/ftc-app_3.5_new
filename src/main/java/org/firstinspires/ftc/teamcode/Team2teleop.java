@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp(name="Team2_telop", group="Linear Opmode")
 //@Disabled
-public class Team2telop extends LinearOpMode {
+public class Team2teleop extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
