@@ -66,7 +66,7 @@ public class Team2teleop extends LinearOpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor elevatorDrive = null;
-    public Servo GrabMove;
+    public Servo GrabMove = null;
     double servoStartPos = 0.02;
 
 
@@ -86,7 +86,7 @@ public class Team2teleop extends LinearOpMode {
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         GrabMove = hardwareMap.get(Servo.class, "move_servo");
-        GrabLift = hardwareMap.get(Servo.class, "liftservo");
+        GrabLift = hardwareMap.get(Servo.class, "lift_servo");
         elevatorDrive = hardwareMap.get(DcMotor.class, "elevator_drive");
 
         GrabLift.setPosition(servoStartPos);
