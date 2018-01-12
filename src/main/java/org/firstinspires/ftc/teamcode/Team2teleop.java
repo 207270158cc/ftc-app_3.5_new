@@ -62,11 +62,18 @@ public class Team2teleop extends LinearOpMode {
     //private DcMotor rightDrive = null;
 
     //I got rid of rearRightServo and rearLeftServo
-    private Servo GrabLift = null;
+
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor elevatorDrive = null;
+    private DcMotor linearDrive = null;
+    private Servo GrabLift = null;
     public Servo GrabMove = null;
+    private Servo fingerservo = null;
+    private Servo wristservo = null;
+    private CRServo UpDown1 = null;
+    private CRServo UpDown2 = null;
+
     double servoStartPos = 0.02;
 
 
@@ -83,15 +90,25 @@ public class Team2teleop extends LinearOpMode {
         //leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         //rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+
+
+
+
+
+        UpDown1 = hardwareMap.get(CRServo.class, "up_down_1");
+        UpDown2 = hardwareMap.get(CRServo.class, "up_down_2");
+        fingerservo = hardwareMap.get(Servo.class, "finger_servo");
+        wristservo = hardwareMap.get(Servo.class, "wrist_servo");
         GrabMove = hardwareMap.get(Servo.class, "move_servo");
         GrabLift = hardwareMap.get(Servo.class, "lift_servo");
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
         elevatorDrive = hardwareMap.get(DcMotor.class, "elevator_drive");
-
+        linearDrive = hardwareMap.get(DcMotor.class, "linear_drive");
         GrabLift.setPosition(servoStartPos);
-
-
+        GrabMove.setPosition(servoStartPos);
+        wristservo.setPosition(servoStartPos);
+        fingerservo.setPosition(servoStartPos);
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -106,8 +123,13 @@ public class Team2teleop extends LinearOpMode {
         double leftPower;
         double rightPower;
         double elevatorPower;
-        //sets rate to move servo
-        double GrabServoPower;
+        double linearPower;
+        double grabLiftPosition =.02;
+        double grabMovePosition =.02;
+        double wristServoPosition =.02;
+        double fingerServoPosition =.02;
+
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -115,8 +137,11 @@ public class Team2teleop extends LinearOpMode {
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
-        GrabLift.setDirection(Servo.Direction.FORWARD);
+        linearDrive.setDirection(DcMotor.Direction.FORWARD);
         elevatorDrive.setDirection(DcMotor.Direction.FORWARD);
+        GrabLift.setDirection(Servo.Direction.FORWARD);
+        fingerservo.setDirection(Servo.Direction.FORWARD);
+        wristservo.setDirection(Servo.Direction.REVERSE);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -132,25 +157,73 @@ public class Team2teleop extends LinearOpMode {
             leftPower  = -gamepad1.left_stick_y;
             rightPower = -gamepad1.right_stick_y ;
             elevatorPower = gamepad2.left_stick_y;
-            GrabServoPower  = -gamepad2.left_stick_y;
+            linearPower = -gamepad2.right_stick_y ;
 
 
-            if (gamepad2.x)
 
-                GrabLift.setPosition(GrabLift.getPosition()+CLAW_SPEED);
+
+            //servos to pick up blocks
+            if (gamepad2.x) {
+                grabMovePosition=(GrabMove.getPosition() - CLAW_SPEED);
+                grabLiftPosition=(GrabLift.getPosition()+CLAW_SPEED);
+            }
+            else if (gamepad2.y) {
+                grabMovePosition=(GrabMove.getPosition() + CLAW_SPEED);
+                grabLiftPosition=(GrabLift.getPosition()-CLAW_SPEED);
+
+                }
+
+            //servos to move finger servo
+            if (gamepad2.a)
+
+                fingerServoPosition=(fingerservo.getPosition()+CLAW_SPEED);
                 //servo1.setPosition(servo1.getPosition()+CLAW_SPEED);
 
-            else if (gamepad2.y)
-                GrabLift.setPosition(GrabLift.getPosition()-CLAW_SPEED);
-            GrabMove.setPosition(GrabMove.getPosition()-CLAW_SPEED);
+            else if (gamepad2.b)
+                fingerServoPosition=(fingerservo.getPosition()-CLAW_SPEED);
 
+            //servos to move wrist servo
+            if (gamepad2.dpad_left)
+                wristServoPosition=(wristservo.getPosition() + CLAW_SPEED);
+                //servo1.setPosition(servo1.getPosition()+CLAW_SPEED);
 
+            else if (gamepad2.dpad_right)
+                wristServoPosition=(wristservo.getPosition() + CLAW_SPEED);
+                wristservo.setPosition(wristservo.getPosition()-CLAW_SPEED);
+
+            //crservos below;
+            if (gamepad2.dpad_down) {
+                UpDown1.setPower(halfspeed);
+                UpDown2.setPower(-halfspeed);
+
+            }
+
+            else if (gamepad2.dpad_up) {
+                UpDown1.setPower(-halfspeed);
+            UpDown2.setPower(halfspeed);
+
+        }
+        else if (gamepad2.dpad_left) {
+                UpDown1.setPower(nospeed);
+                UpDown2.setPower(nospeed);
+                
+            }
 
             // Send calculated power to wheels
+
+            GrabMove.setPosition(Range.clip(grabMovePosition,0,1));
+            GrabLift.setPosition((Range.clip(grabLiftPosition, 0, 1)));
+            fingerservo.setPosition(Range.clip(fingerServoPosition, 0, 1 ));
+            wristservo.setPosition((Range.clip(wristServoPosition, 0, 1 )));
+
+
+
+
 
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
             elevatorDrive.setPower(elevatorPower);
+            linearDrive.setPower(linearPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
