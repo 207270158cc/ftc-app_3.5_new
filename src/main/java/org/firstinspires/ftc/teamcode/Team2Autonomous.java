@@ -46,12 +46,16 @@ public class Team2Autonomous extends LinearOpMode {
     /* Declare OpMode members. */
     // This is our hardware
 
-    private Servo GrabLift = null;
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor elevatorDrive = null;
-    public Servo GrabMove;
-    double servoStartPos = 0.02;
+    private DcMotor linearDrive = null;
+    private Servo GrabLift = null;
+    public Servo GrabMove = null;
+    private Servo fingerservo = null;
+    private Servo wristservo = null;
+    private Servo UpDown1 = null;
+    private Servo UpDown2 = null;
 
 
 
@@ -73,11 +77,16 @@ public class Team2Autonomous extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
 
+        UpDown1 = hardwareMap.get(Servo.class, "up_down1");
+        UpDown2 = hardwareMap.get(Servo.class, "up_down2");
+        fingerservo = hardwareMap.get(Servo.class, "finger_servo");
+        wristservo = hardwareMap.get(Servo.class, "wrist_servo");
+        GrabMove = hardwareMap.get(Servo.class, "move_servo");
+        GrabLift = hardwareMap.get(Servo.class, "lift_servo");
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        GrabMove = hardwareMap.get(Servo.class, "move_servo");
-        GrabLift = hardwareMap.get(Servo.class, "liftservo");
         elevatorDrive = hardwareMap.get(DcMotor.class, "elevator_drive");
+        linearDrive = hardwareMap.get(DcMotor.class, "linear_drive");
 
 
 
@@ -105,11 +114,11 @@ public class Team2Autonomous extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 48 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  24,  24, 5.0);  // S1: Forward 48 Inches with 5 Sec timeout
+        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
-        GrabMove.setPosition(1.0);            // S4: Stop and close the claw.
+
 
         sleep(1000);     // pause for servos to move
 
