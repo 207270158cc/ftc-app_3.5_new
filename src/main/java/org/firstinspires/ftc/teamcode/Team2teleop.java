@@ -71,8 +71,8 @@ public class Team2teleop extends LinearOpMode {
     public Servo GrabMove = null;
     private Servo fingerservo = null;
     private Servo wristservo = null;
-    private Servo UpDown1 = null;
-    private Servo UpDown2 = null;
+    private CRServo UpDown1 = null;
+    private CRServo UpDown2 = null;
 
 
     double minServoPosition =.02;
@@ -97,8 +97,8 @@ public class Team2teleop extends LinearOpMode {
 
 
 
-        UpDown1 = hardwareMap.get(Servo.class, "up_down1");
-        UpDown2 = hardwareMap.get(Servo.class, "up_down2");
+        UpDown1 = hardwareMap.get(CRServo.class, "up_down1");
+        UpDown2 = hardwareMap.get(CRServo.class, "up_down2");
         fingerservo = hardwareMap.get(Servo.class, "finger_servo");
         wristservo = hardwareMap.get(Servo.class, "wrist_servo");
         GrabMove = hardwareMap.get(Servo.class, "move_servo");
@@ -126,25 +126,26 @@ public class Team2teleop extends LinearOpMode {
         double grabLiftPosition;
         double wristServoPosition;
         double fingerServoPosition;
-        double upDownPosition1;
-        double upDownPosition2;
+        double upDownPower1=0;
+        double upDownPower2=0;
 
 
 
+        /*
+        GrabLift.setPosition(minServoPosition);
+        GrabMove.setPosition(minServoPosition);
+        wristservo.setPosition(minServoPosition);
+        fingerservo.setPosition(maxServoPosition);
+        UpDown1.setPosition(minServoPosition);
+        UpDown2.setPosition(minServoPosition);
+            */
 
-        //GrabLift.setPosition(minServoPosition);
-        //GrabMove.setPosition(minServoPosition);
-        //wristservo.setPosition(minServoPosition);
-        //fingerservo.setPosition(maxServoPosition);
-        //UpDown1.setPosition(minServoPosition);
-        //UpDown2.setPosition(minServoPosition);
 
         grabLiftPosition=0;
         grabMovePosition=0;
         fingerServoPosition=1;
         wristServoPosition=0;
-        upDownPosition1=0;
-        upDownPosition2=1;
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -155,8 +156,6 @@ public class Team2teleop extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
         linearDrive.setDirection(DcMotor.Direction.FORWARD);
         elevatorDrive.setDirection(DcMotor.Direction.FORWARD);
-        UpDown1.setDirection(Servo.Direction.FORWARD);
-        UpDown2.setDirection(Servo.Direction.REVERSE);
         GrabLift.setDirection(Servo.Direction.FORWARD);
         fingerservo.setDirection(Servo.Direction.FORWARD);
         wristservo.setDirection(Servo.Direction.REVERSE);
@@ -209,13 +208,16 @@ public class Team2teleop extends LinearOpMode {
 
             //updown servos below;
             if (gamepad1.dpad_up) {
-                upDownPosition1=(maxServoPosition);
-                upDownPosition2=(maxServoPosition);
+                upDownPower1=(halfspeed);
+                upDownPower2=(oppspeed);
             }
             else if (gamepad1.dpad_down) {
-                upDownPosition1=(minServoPosition);
-                upDownPosition2=(minServoPosition);
-
+                upDownPower1 = (oppspeed);
+                upDownPower2 = (halfspeed);
+            }
+            else if (gamepad1.dpad_left) {
+                upDownPower1 = (nospeed);
+                upDownPower2 = (nospeed);
             }
 
             // Send calculated power to wheels
@@ -224,14 +226,15 @@ public class Team2teleop extends LinearOpMode {
             GrabLift.setPosition((Range.clip(grabLiftPosition, 0, 1)));
             fingerservo.setPosition(Range.clip(fingerServoPosition, 0, 1 ));
             wristservo.setPosition((Range.clip(wristServoPosition, 0, 1 )));
-            UpDown1.setPosition(Range.clip(upDownPosition1,0,1));
-            UpDown2.setPosition(Range.clip(upDownPosition2,0,1));;
+
 
 
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
             elevatorDrive.setPower(elevatorPower);
             linearDrive.setPower(linearPower);
+            UpDown1.setPower(upDownPower1);
+            UpDown2.setPower(upDownPower2);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
