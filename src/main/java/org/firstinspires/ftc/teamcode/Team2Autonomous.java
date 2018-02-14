@@ -54,8 +54,8 @@ public class Team2Autonomous extends LinearOpMode {
     public Servo GrabMove = null;
     private Servo fingerservo = null;
     private Servo wristservo = null;
-    private Servo UpDown1 = null;
-    private Servo UpDown2 = null;
+    private CRServo UpDown1 = null;
+    private CRServo UpDown2 = null;
 
 
 
@@ -77,8 +77,8 @@ public class Team2Autonomous extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
 
-        UpDown1 = hardwareMap.get(Servo.class, "up_down1");
-        UpDown2 = hardwareMap.get(Servo.class, "up_down2");
+        UpDown1 = hardwareMap.get(CRServo.class, "up_down1");
+        UpDown2 = hardwareMap.get(CRServo.class, "up_down2");
         fingerservo = hardwareMap.get(Servo.class, "finger_servo");
         wristservo = hardwareMap.get(Servo.class, "wrist_servo");
         GrabMove = hardwareMap.get(Servo.class, "move_servo");
@@ -111,12 +111,19 @@ public class Team2Autonomous extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+                                // S4: Stop and close the claw.
+        GrabMove.setPosition(4.0);
+        GrabLift.setPosition(0.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  24,  24, 5.0);  // S1: Forward 48 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED,  12,  -12, 5.0);  // S1: Forward 48 Inches with 5 Sec timeout
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        GrabLift.setPosition(0.0);
+        GrabMove.setPosition(0.0);
+        encoderDrive(DRIVE_SPEED, -3, 3, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        //The motors for some reason are inverted so I'm switching some values in order to negate the inversion (double negatives)
+
 
 
 
