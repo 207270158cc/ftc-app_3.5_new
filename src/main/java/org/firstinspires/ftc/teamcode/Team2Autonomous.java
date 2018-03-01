@@ -113,15 +113,19 @@ public class Team2Autonomous extends LinearOpMode {
         waitForStart();
                                 // S4: Stop and close the claw.
         GrabMove.setPosition(4.0);
+        sleep(670);
         GrabLift.setPosition(0.0);
+        sleep(550);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  12,  -12, 5.0);  // S1: Forward 48 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED,  12,  12, 9.0);  // S1: Forward 48 Inches with 5 Sec timeout
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        
         GrabLift.setPosition(0.0);
         GrabMove.setPosition(0.0);
-        encoderDrive(DRIVE_SPEED, -3, 3, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        sleep(550);
+        encoderDrive(DRIVE_SPEED, 3, 3, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         //The motors for some reason are inverted so I'm switching some values in order to negate the inversion (double negatives)
 
 
@@ -191,7 +195,7 @@ public class Team2Autonomous extends LinearOpMode {
             leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            //  sleep(250);   // optional pause after each move
+              //sleep(250);   // optional pause after each move
         }
     }
 }

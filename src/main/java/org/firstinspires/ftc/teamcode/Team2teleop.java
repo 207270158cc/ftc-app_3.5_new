@@ -118,6 +118,7 @@ public class Team2teleop extends LinearOpMode {
         double nospeed = 0;
         double halfspeed = .5;
         final double CLAW_SPEED = 0.02;
+        final double wrist_speed=.002;
         double leftPower;
         double rightPower;
         double elevatorPower;
@@ -153,7 +154,7 @@ public class Team2teleop extends LinearOpMode {
 
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
         linearDrive.setDirection(DcMotor.Direction.FORWARD);
         elevatorDrive.setDirection(DcMotor.Direction.FORWARD);
         GrabLift.setDirection(Servo.Direction.FORWARD);
@@ -200,11 +201,11 @@ public class Team2teleop extends LinearOpMode {
 
             //servos to move wrist servo
             if (gamepad2.dpad_down)
-                wristServoPosition=(wristservo.getPosition() + CLAW_SPEED);
+                wristServoPosition=(wristservo.getPosition() + wrist_speed);
                 //servo1.setPosition(servo1.getPosition()+CLAW_SPEED);
 
             else if (gamepad2.dpad_up)
-                wristServoPosition=(wristservo.getPosition() - CLAW_SPEED);
+                wristServoPosition=(wristservo.getPosition() - wrist_speed);
 
             //updown servos below;
             if (gamepad1.dpad_up) {
@@ -216,8 +217,8 @@ public class Team2teleop extends LinearOpMode {
                 upDownPower2 = (halfspeed);
             }
             else if (gamepad1.dpad_left) {
-                upDownPower1 = (nospeed);
-                upDownPower2 = (nospeed);
+                upDownPower1 = (halfspeed);
+                upDownPower2 = (oppspeed);
             }
 
             // Send calculated power to wheels
